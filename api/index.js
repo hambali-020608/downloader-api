@@ -4,15 +4,16 @@ const yts = require( 'yt-search' );
 const { spotidown, SpotifyDown } = require('../function/spotify');
 const { ytdl } = require('../function/youtube');
 const { ddownr } = require('../function/ddownr');
+const { downloadSpotify } = require('../function/spotiLink')
 const path = require('path')
-
+const {islamai}= require('../function/muslimAi')
 
 const app = express();
 app.use(cors())
 const port = 3000;
 
 app.get('/',(req,res)=>{
-res.sendFile('/view/index.html',{root:'../'})
+res.sendFile('/view/index.html',{root:'./'})
 })
 
 
@@ -40,14 +41,29 @@ app.get('/api/youtube/v2/download',async(req,res)=>{
 })
 
 // search spotify
-app.get('/api/spotify/download',async(req,res)=>{
+app.get('/api/spotify/search',async(req,res)=>{
 const spotiyUrl= req.query.search
 const downloadSpotify = new SpotifyDown(spotiyUrl)
 await downloadSpotify.download()
 res.json(downloadSpotify.metadata)
 })
+// download spotify
+app.get('/api/spotify/download',async(req,res)=>{
+const spotiyUrl= req.query.url
+const music = await downloadSpotify(spotiyUrl)
+res.json(music)
 
 
+})
+
+// muslim ai
+app.get('/api/muslimai',async(req,res)=>{
+    const text = req.query.question
+    const response = await islamai(text)
+    res.json(response)
+
+
+})
 
 
 // port
